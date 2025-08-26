@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import ProductList from '@/views/ProductList.vue'
 import ProductDetail from '@/views/ProductDetail.vue'
+import ProductCreate from "@/views/ProductCreate.vue";
+import ProductUpdate from "@/views/ProductUpdate.vue";
+import SalesList from "@/views/SalesList.vue";
+import ImageInsert from "@/views/ImageInsert.vue";
 
 const routes = [
   {
