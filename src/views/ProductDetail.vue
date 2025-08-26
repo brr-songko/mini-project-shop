@@ -176,9 +176,9 @@ export default {
         getCurrencyFormat(value) {
             return this.$currencyFormat(value);
         },
-        async getProdcutDetail() {
+        async getProductDetail() {
             let productDetail = await this.$api("/api/productDetail", { param:[this.productId]});
-            if (procductDetail.length > 0) {
+            if (productDetail.length > 0) {
                 this.productDetail = productDetail[0];
                 this.totalPrice = this.productDetail.product_price * this.total;
             }

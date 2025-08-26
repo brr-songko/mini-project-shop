@@ -135,7 +135,7 @@ export default {
             });
 
             let category1 = [];
-            for(let key in oCateggory){
+            for(let key in oCategory){
                 category1.push(key);
             }
 
