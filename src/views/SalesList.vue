@@ -18,16 +18,16 @@
                 <tbody>
                     <tr :key="i" v-for="(product, i) in productList">
                         <td>
-                            <img v-if="product.path!=null" :src="`\download/${product.id}/${product.path}`" style="height:50px;width:auto;" />
+                            <img v-if="product.PATH!=null" :src="`/download/${product.ID}/${product.PATH}`" style="height:50px;width:auto;" />
                         </td>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ product.product_price }}</td>
-                        <td>{{ product.delivery_price }}</td>
-                        <td>{{ product.add_delivery_price }}</td>
+                        <td>{{ product.PRODUCT_NAME }}</td>
+                        <td>{{ product.PRODUCT_PRICE }}</td>
+                        <td>{{ product.DELIVERY_PRICE }}</td>
+                        <td>{{ product.ADD_DELIVERY_PRICE }}</td>
                         <td>
-                            <button type="button" class="btn btn-info me-1" @click="goToImageInsert(product.id);">사진등록</button>
-                            <button type="button" class="btn btn-warning me-1" @click="goToUpdate(product.id);">수정</button>
-                            <button type="button" class="btn btn-danger" @click="deleteProduct(product.id);">삭제</button>
+                            <button type="button" class="btn btn-info me-1" @click="goToImageInsert(product.ID);">사진등록</button>
+                            <button type="button" class="btn btn-warning me-1" @click="goToUpdate(product.ID);">수정</button>
+                            <button type="button" class="btn btn-danger" @click="deleteProduct(product.ID);">삭제</button>
                         </td>
                     </tr>
                 </tbody>
@@ -48,7 +48,7 @@ export default {
     },
     methods: {
         async getProductList() {
-            this.productList = await this.$api("/api/productList2", {});
+            this.productList = await this.$api("/api/productList2", {}, 'get');
             console.log(this.productList);
         },
         goToInsert() {
@@ -72,7 +72,7 @@ export default {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     console.log(product_id)
-                    await this.$api("/api/productDelete",{param:[product_id]});
+                    await this.$api("/api/productDelete",{param:[product_id]}, 'get');
                     this.getProductList();
                     this.$swal.fire('삭제되었습니다!', '', 'success')
                 }

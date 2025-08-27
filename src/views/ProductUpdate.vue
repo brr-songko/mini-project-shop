@@ -112,7 +112,7 @@ export default {
       this.$router.push({path:'/sales'});
     },
     async getProductDetail() {
-      let productDetail = await this.$api("/api/productDetail",{param:[this.productId]});
+      let productDetail = await this.$api("/api/productDetail",{param:[this.productId]}, 'get');
       if(productDetail.length > 0) {
         this.productDetail = productDetail[0];
       }

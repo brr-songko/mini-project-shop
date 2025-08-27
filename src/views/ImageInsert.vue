@@ -123,13 +123,13 @@ export default {
       this.$router.push({path: 'sales'});
     },
     async getProductDetail() {
-      let productDetail = await this.$api("/api/productDetail", {param:[this.productId]});
+      let productDetail = await this.$api("/api/productDetail", {param:[this.productId]}, 'get');
       if (productDetail.length > 0) {
         this.productDetail = productDetail[0];
       }
   },
     async getProductImage() {
-      this.productImage = await this.$api("/api/imageList", {param:[this.productId]});
+      this.productImage = await this.$api("/api/imageList", {param:[this.productId]}, 'get');
       console.log('this.productImage', this.productImage)
     },
     deleteImage(id) {
@@ -140,7 +140,7 @@ export default {
         cancelButtonText: '취소'
       }).then(async (result) => {
         if(result.isConfirmed) {
-          await this.$api("/api/imageDelete", {param:[id]});
+          await this.$api("/api/imageDelete", {param:[id]}, 'post');
           this.getProductImage();
           this.$swal.fire('삭제되었습니다!', '', 'success');
         }
@@ -153,7 +153,7 @@ export default {
         name = files[0].name;
         data = await this.$base64(files[0]);
       }
-      const {error} = await this.$api(`/upload/${this.productId}/${type}/${name}`, {data});
+      const {error} = await this.$api(`/upload/${this.productId}/${type}/${name}`, {data}, 'post');
       if(error) {
         return this.$swal("이미지 업로드 실패했습니다. 다시 시도하세요.");
       }

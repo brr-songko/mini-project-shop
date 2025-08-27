@@ -5,14 +5,14 @@
             <div class="mb-3 row">
                 <label class="col-md-3 col-form-label">제품명</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" v-model="product.product_name">
+                    <input type="text" class="form-control" v-model="product.PRODUCT_NAME">
                 </div>
             </div>
             <div class="mb-3 row">
                 <label class="col-md-3 col-form-label">제품가격</label>
                 <div class="col-md-9">
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control" v-model="product.product_price">
+                        <input type="number" class="form-control" v-model="product.PRODUCT_PRICE">
                         <span class="input-group-text">원</span>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                 <label class="col-md-3 col-form-label">배송비</label>
                 <div class="col-md-9">
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control" v-model="product.delivery_price">
+                        <input type="number" class="form-control" v-model="product.DELIVERY_PRICE">
                         <span class="input-group-text">원</span>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                 <label class="col-md-3 col-form-label">추가배송비(도서산간)</label>
                 <div class="col-md-9">
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control" v-model="product.add_delivery_price">
+                        <input type="number" class="form-control" v-model="product.ADD_DELIVERY_PRICE">
                         <span class="input-group-text">원</span>
                     </div>
                 </div>
@@ -60,14 +60,14 @@
             <div class="mb-3 row">
                 <label class="col-md-3 col-form-label">태그</label>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" v-model="product.tags">
+                    <input type="text" class="form-control" v-model="product.TAGS">
                 </div>
             </div>
             <div class="mb-3 row">
                 <label class="col-md-3 col-form-label">출고일</label>
                 <div class="col-md-9">
                     <div class="input-group mb-3">
-                        <input type="number" class="form-control" v-model="product.outbound_days">
+                        <input type="number" class="form-control" v-model="product.OUTBOUND_DAYS">
                         <span class="input-group-text">일 이내 출고</span>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ export default {
             this.$router.push({path:'/'});
         },
         async getCategoryList() {
-            let categoryList = await this.$api("/api/categoryList", {});
+            let categoryList = await this.$api("/api/categoryList", {}, 'get');
             this.categoryList = categoryList;
 
             let oCategory= {};
@@ -195,27 +195,27 @@ export default {
             this.category2 = category2;
         },
         productInsert() {
-            if(this.product.product_name=="") {
+            if(this.product.PRODUCT_NAME=="") {
                 return this.$swal("제품명은 필수 입력값입니다. ");
             }
 
-            if(this.product.product_price=="" || this.product.product_price == 0) {
+            if(this.product.PRODUCE_PRICE=="" || this.product.PRODUCT_PRICE == 0) {
                 return this.$swal("제품 가격을 입력하세요. ");
             }
 
-            if(this.product.delivery_price =="" || this.product.delivery_price == 0) {
+            if(this.product.DELIVERY_PRICE =="" || this.product.DELIVERY_PRICE == 0) {
                 return this.$swal("배송료를 입력하세요. ");
             }
 
-            if(this.product.outbound_days=="" || this.product.outbound_days == 0) {
+            if(this.product.OUTBOUND_DAYS=="" || this.product.OUTBOUND_DAYS == 0) {
                 return this.$swal("출고일을 입력하세요. ");
             }
 
-            this.product.category_id = this.categoryList.filter(c => {
+            this.product.CATEGORY_ID = this.categoryList.filter(c => {
                 return (c.category1 == this.cate1 && c.category2 == this.cate2 && c.category3 == this.cate3);
             })[0].id;
 
-            console.log(this.product.category_id);
+            console.log(this.product.CATEGORY_ID);
 
             this.$swal.fire({
                 title: '정말 등록 하시겠습니까?',
@@ -224,7 +224,7 @@ export default {
                 cancelButtonText: '취소'
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    await this.$api("/api/productInsert", {param:[this.product]});
+                    await this.$api("/api/productInsert", {param:[this.product]},'post');
                     this.$swal.fire('저장되었습니다!', '', 'success');
                     this.$router.push({path:'/sales'});
                 }

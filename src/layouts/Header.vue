@@ -50,7 +50,7 @@ export default {
       window.Kakao.API.request({
         url: '/v2/user/me',
         success: res => {
-          const kakao_nickname = res.kakao_nickname;
+          const kakao_nickname = res.kakao_account.profile.nickname;
           console.log(kakao_nickname);
           this.login(kakao_nickname);
           alert("로그인 성공!");
@@ -59,12 +59,10 @@ export default {
     },
     async login(kakao_account) {
       await this.$api("/api/login", {
-        param: [
-          {nickname:kakao_account}
-        ]
-      });
+        nickname: kakao_account
+      }, 'post');
 
-      this.$store.commit("user", kakao_account);
+      this.$store.commit("user", {nickname:kakao_account});
     },
     kakaoLogout() {
       window.Kakao.Auth.logout((response) => {

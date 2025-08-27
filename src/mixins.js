@@ -2,82 +2,87 @@ import axios from 'axios';
 
 export default {
     methods: {
-        async $api(url, data) {
-            return (await axios({
-                method: 'post',
-                url,
-                data
-            }).catch(e => {
-                console.log(e);
-            })).data;
+        /**
+         * $api
+         * @param {string} url - 요청 URL
+         * @param {object} data - 요청 바디 (POST) 또는 params (GET)
+         * @param {string} method - 'get' | 'post' (기본 'post')
+         * @returns {Promise<any>} - 응답 데이터
+         */
+        async $api(url, data = {}, method = 'post') {
+            try {
+                const config = {
+                    url,
+                    method: method.toLowerCase()
+                };
+
+                if (method.toLowerCase() === 'get') {
+                    config.params = data; // GET은 params
+                } else {
+                    config.data = data;   // POST/PUT 등은 data
+                }
+
+                const res = await axios(config);
+                return res.data;
+            } catch (e) {
+                console.error('API 호출 오류:', e);
+                return null; // 필요하면 throw e로 상위에서 처리 가능
+            }
         },
+
         $base64(file) {
             return new Promise(resolve => {
-                var a = new FileReader();
-                a.onload = e => {
-                    resolve(e.target.result);
-                };
-                a.readAsDataURL(file);
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsDataURL(file);
             });
         },
+
         $currencyFormat(value, format = '#,###') {
             if (value == 0 || value == null) return 0;
-            var currency = format.substring(0, 1);
-            if (currency == '$' || currency == '|') {
-                format = format.substring(1, format.length);
-            } else {
-                currency = '';
-            }
+            let currency = format.substring(0, 1);
+            if (currency === '$' || currency === '|') format = format.substring(1);
+            else currency = '';
 
-            var groupingSeparator = ",";
-            var maxFractionDigits = 0;
-            var decimalSeparator = ".";
-            if (format.indexOf(".") == -1) {
-                groupingSeparator = ",";
-            } else {
-                if (format.indexOf(",") < format.indexOf(".")) {
-                    groupingSeparator = ",";
-                    decimalSeparator = ".";
-                    maxFractionDigits = format.length - format.indexOf(".") - 1;
+            let groupingSeparator = ',';
+            let decimalSeparator = '.';
+            let maxFractionDigits = 0;
+
+            if (format.indexOf('.') !== -1) {
+                if (format.indexOf(',') < format.indexOf('.')) {
+                    groupingSeparator = ',';
+                    decimalSeparator = '.';
+                    maxFractionDigits = format.length - format.indexOf('.') - 1;
                 } else {
-                    groupingSeparator = ".";
-                    decimalSeparator = ",";
-                    maxFractionDigits = format.length - format.indexOf(",") - 1;
+                    groupingSeparator = '.';
+                    decimalSeparator = ',';
+                    maxFractionDigits = format.length - format.indexOf(',') - 1;
                 }
             }
 
-            var prefix = "";
-            var d = "";
-            var dec = 1;
-            for (var i = 0; i <maxFractionDigits; i++) {
-                dec = dec * 10;
-            }
+            let prefix = '';
+            let d = '';
+            let dec = 1;
+            for (let i = 0; i < maxFractionDigits; i++) dec *= 10;
 
-            var v = String(Math.round(parseFloat(value) * dec) / dec);
-
-            if (v.indexOf("-") > -1) {
-                prefix = "-";
+            let v = String(Math.round(parseFloat(value) * dec) / dec);
+            if (v.startsWith('-')) {
+                prefix = '-';
                 v = v.substring(1);
             }
 
-            if (maxFractionDigits > 0 && format.substring(format.length - 1, format.length) == '0') {
-                v = String(parseFloat(v).toFixed(maxFractionDigits));
+            if (maxFractionDigits > 0 && format.endsWith('0')) v = parseFloat(v).toFixed(maxFractionDigits);
+
+            if (maxFractionDigits > 0 && v.includes('.')) {
+                d = v.substring(v.indexOf('.')).replace('.', decimalSeparator);
+                v = v.substring(0, v.indexOf('.'));
             }
 
-            if (maxFractionDigits > 0 && v.indexOf(".") > -1) {
-                d = v.substring(v.indexOf("."));
-                d = d.replace(".", decimalSeparator);
-                v = v.substring(0, v.indexOf("."));
-            }
-            var regExp = /\D/g;
-            v = v.replace(regExp, "");
-            var r = /(\d+)(\d{3})/;
-            while (r.test(v)) {
-                v = v.replace(r, "$1" + groupingSeparator + "$2");
-            }
+            v = v.replace(/\D/g, '');
+            const r = /(\d+)(\d{3})/;
+            while (r.test(v)) v = v.replace(r, `$1${groupingSeparator}$2`);
 
-            return prefix + currency + String(v) + String(d);
+            return prefix + currency + v + d;
         }
-
     }
-}
+};
